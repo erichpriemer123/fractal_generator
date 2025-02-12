@@ -52,16 +52,31 @@ def draw_line(xy1,xy2,pixels,color):
 
             pixels[cords[1]][cords[0]] = color
 
+def square_cords(center,side_length):
+
+    cords = {"top_left":(center[0]-round(side_length/2),center[1]-round(side_length/2)),
+            "top_right":(center[0]+round(side_length/2),center[1]-round(side_length/2)),
+             "bottom_right" : (center[0]-round(side_length/2),center[1]+round(side_length/2)),
+             "bottom_left" : (center[0]+round(side_length/2),center[1]+round(side_length/2))
+    }
+
+    return cords 
+
 def draw_square(center, side_length, pixels, color):
-    top_right_cords = (center[0]-round(side_length/2),center[1]-round(side_length/2))
-    top_left_cords = (center[0]+round(side_length/2),center[1]-round(side_length/2))
-    bottom_right_cords = (center[0]-round(side_length/2),center[1]+round(side_length/2))
-    bottom_left_cords = (center[0]+round(side_length/2),center[1]+round(side_length/2))
     
-    draw_line(top_left_cords,top_right_cords,pixels,color)
-    draw_line(bottom_left_cords,bottom_right_cords,pixels,color)
-    draw_line(top_left_cords,bottom_left_cords,pixels,color)
-    draw_line(top_right_cords,bottom_right_cords,pixels,color)
+    cords = square_cords(center,side_length)
+    draw_line(cords["top_left"],cords["top_right"],pixels,color)
+    draw_line(cords["bottom_left"],cords["bottom_right"],pixels,color)
+    draw_line(cords["top_left"],cords["bottom_left"],pixels,color)
+    draw_line(cords["top_right"],cords["bottom_right"],pixels,color)
+
+def fill_square(center, side_length, pixels, color):
+    cords = square_cords(center,side_length)
+
+    for x in range(cords["top_left"][0],cords["top_right"][0]):
+        for y in range(cords["top_left"][1],cords["bottom_left"][1]):
+            if 0 < x and x < 500 and 0 < y and y < 500:
+                pixels[y][x] = color
 
     
 def draw_square_fractal(center, side_lenth, depth, pixels, color, origin):
@@ -69,16 +84,11 @@ def draw_square_fractal(center, side_lenth, depth, pixels, color, origin):
         return
     else:
         draw_square(center,side_lenth,pixels,color)
+        fill_square(center,side_lenth,pixels,color)
 
-        plusX = round(center[0]+side_lenth/1.333333)
-        minusX = round(center[0]-side_lenth/1.333333)
-
-        plusY = round(center[1]+side_lenth/1.333333)
-        minusY = round(center[1]-side_lenth/1.333333)
-
-        r=color[0]-40
-        g=color[1]-10
-        b=color[2]-20
+        r=color[0]-0
+        g=color[1]-0
+        b=color[2]-0
 
         if (r < 0):
             r = 0
@@ -88,39 +98,42 @@ def draw_square_fractal(center, side_lenth, depth, pixels, color, origin):
             b = 0
 
         new_color = (r,g,b)
-        
+
+        plusX = round(center[0]+side_lenth/1.8)
+        minusX = round(center[0]-side_lenth/1.8)
+
+        plusY = round(center[1]+side_lenth/1.8)
+        minusY = round(center[1]-side_lenth/1.8)
+
         #top right square
-        #if(origin != "bottomleft"):
-        draw_square_fractal((plusX,minusY),side_lenth//2, depth-1,pixels,new_color,"topright")
+        if(origin != "bottomleft"):
+            draw_square_fractal((plusX,minusY),side_lenth//2, depth-1,pixels,new_color,"topright")
 
         #top left square
-        #if(origin != "bottomright"):
-        draw_square_fractal((minusX,minusY),side_lenth//2, depth-1,pixels,new_color,"topleft")
+        if(origin != "bottomright"):
+            draw_square_fractal((minusX,minusY),side_lenth//2, depth-1,pixels,new_color,"topleft")
 
         #bottom right square
-        #if(origin != "topleft"):
-        draw_square_fractal((plusX,plusY),side_lenth//2, depth-1,pixels,new_color,"bottomright")
+        if(origin != "topleft"):
+            draw_square_fractal((plusX,plusY),side_lenth//2, depth-1,pixels,new_color,"bottomright")
 
         #bottom left square
-        #if(origin != "topright"):
-        draw_square_fractal((minusX,plusY),side_lenth//2, depth-1,pixels,new_color,"bottomleft")
+        if(origin != "topright"):
+            draw_square_fractal((minusX,plusY),side_lenth//2, depth-1,pixels,new_color,"bottomleft")
 
 
 __name__ == "__main__"
 
-    
 
 center = (249,249)
-color = (255, 255, 255)
+color = (0, 0, 0)
 
-
-
-
-for x in range(1,10):
+for x in range(0,12):
         # Define the size of our image
     pixels = np.zeros( (500, 500,3), dtype=np.uint8 )
+    pixels.fill(200)
         #draw fractal 
-    draw_square_fractal(center,150,x,pixels,color,None)
+    draw_square_fractal(center,170,x,pixels,color,None)
         # Turn our pixel array into a real picture
     img = Image.fromarray(pixels)
         # save the image
