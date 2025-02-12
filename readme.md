@@ -1,0 +1,1 @@
+An interesting intersection between math, art, and computer science.
